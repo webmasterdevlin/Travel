@@ -87,16 +87,22 @@ namespace Travel.WebApi
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller}/{action=Index}/{id?}");
+            });
 
-                endpoints.MapToVueCliProxy(
-                    pattern: "{*path}",
-                    options: new SpaOptions { SourcePath = "../vue-app" },
-                    npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
-                    regex: "Compiled successfully",
-                    forceKill: true,
-                    wsl: false // Set to true if you are using WSL on windows. For other operating systems it will be ignored
-                );
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "../vue-app";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseVueCli(npmScript: "serve");
+                }
             });
         }
     }
